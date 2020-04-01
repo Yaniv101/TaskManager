@@ -22,13 +22,137 @@ namespace Matrix.TaskManager.Tester
 
 		private async void RunTest()
 		{
-			var token = await AuthenticateTokenAsync(
-				string.Format(AuthUrl, "authenticate") ,"admin", "12345");
+			var token = await Login("admin", "12345");
 
-			var adminuserJson = await CallTask(string.Format(TaskUrl, "getuser?userid=1"), token,
+			var adminUser =await GetUser(1,token);//get admin user
+
+			var userid = await CreateUser(token);
+
+			var allUsers = await GetAllUsers(token);
+
+			var newTask1 = await AddTask("1", adminUser.UserId, token);
+
+			var newTask2 = await AddTask("2", adminUser.UserId, token);
+
+			await UpdateTask(newTask1, token);
+
+			await UpdateTaskStatus(newTask1, enTaskStatus.InProgress, token);
+
+			var allTasks = GetUserTasks(adminUser.UserId, token);
+
+			await ShereTasks(adminUser.UserId, userid, new List<TaskInfo>() { newTask1, newTask2 }, token);
+
+			var tasksByMail =await GetTasksByEmail("Yaniv101@gmail.com", token );
+
+
+			var yanivToken = await Login( "yaniv", "yaniv");
+			await EmailMyTasks(yanivToken);
+
+			await DeleteUser(userid, yanivToken);
+			await DeleteUserTasks(adminUser.UserId, token);
+
+		}
+		private async Task<string> DeleteUserTasks(int userid, string token)
+		{
+			return await CallTask(string.Format(TaskUrl, "deleteusertasks?userid= " + userid), token,
+					"", "POST");
+		}
+
+		private async Task<string> DeleteUser(int userid, string token)
+		{
+			return await CallTask(string.Format(TaskUrl, "deleteuser?userid= " + userid), token,
+					"", "POST");
+		}
+
+		private async Task<string> EmailMyTasks(string token)
+		{
+			return await CallTask(string.Format(TaskUrl, "emailmytasks"),
+				token, "", "POST");
+		}
+
+		private async Task<string> Login(string user, string pass)
+		{
+			var token =  await AuthenticateTokenAsync( string.Format(AuthUrl, 
+												"authenticate"), user,pass);
+
+			return token;
+		}
+
+		private async Task<List<UserInfo>> GetAllUsers(string token)
+		{
+			var allusersJson = await CallTask(
+				string.Format(AuthUrl, "getusers"), token,
 				"", "GET");
-			var adminUser= JsonConvert.DeserializeObject<UserInfo>(adminuserJson);
+			return JsonConvert.DeserializeObject<List<UserInfo>>(allusersJson);
+		}
 
+		private async Task<List<TaskInfo>> GetTasksByEmail(string email, string token)
+		{
+			var tasksByMailJson =
+				await CallTask(string.Format(TaskUrl, "getusertasksbyemail?email=" + email),
+				token, "", "GET");
+			return JsonConvert.DeserializeObject<List<TaskInfo>>(tasksByMailJson);
+		}
+
+		private async Task<string> ShereTasks(int userFromId, int userToid, List<TaskInfo> tasks, string token)
+		{
+			return await CallTask(string.Format(TaskUrl, 
+							"sheretasks?userid=" + userFromId+ "&userIdToShere= " + userToid),token,
+							JsonConvert.SerializeObject(tasks), "POST");
+		}
+
+		private async Task<List<TaskInfo>> GetUserTasks(int userId, string token)
+		{
+			var result = await CallTask(string.Format(TaskUrl, "getusertasks?userid= " + userId), token,
+						"", "GET");
+			return JsonConvert.DeserializeObject<List<TaskInfo>>(result);
+		}
+
+		private async Task<string> UpdateTaskStatus(TaskInfo newTask, enTaskStatus status, string token)
+		{
+			return await CallTask(string.Format(TaskUrl, "updatetaskstatus?taskid= " + 
+										newTask.TaskId + "&status=" + status.ToString()), token,
+				JsonConvert.SerializeObject(newTask), "POST");
+		}
+
+		private async Task<string> UpdateTask(TaskInfo newTask, string token)
+		{
+			newTask.DueDate = DateTime.Now;
+
+			return await CallTask(string.Format(TaskUrl, "updatetask"), token,
+							JsonConvert.SerializeObject(newTask), "POST");
+
+		}
+
+		private async Task<TaskInfo> AddTask(string tinx, int userId, string token)
+		{
+			var taskJson =  await CallTask(string.Format(TaskUrl, "addtask?userId=" + userId), token,
+							JsonConvert.SerializeObject(
+								 	new TaskInfo()
+									 {
+										 TaskName = "t"+ tinx,
+										 Address = "ad" + tinx,
+										 CityName = "c" + tinx,
+										 Status = enTaskStatus.New,
+										 Priority = enPriority.Hige,
+										 DueDate = DateTime.Now
+									 }
+
+								), "POST");
+			return  JsonConvert.DeserializeObject<TaskInfo>(taskJson);
+
+		}
+
+		private async Task<UserInfo > GetUser(int userId,string token)
+		{
+			var userJson = await CallTask(string.Format(TaskUrl, "getuser?userid=" + userId), token,
+				"", "GET");
+			var user = JsonConvert.DeserializeObject<UserInfo>(userJson);
+			return user;
+		}
+
+		private async Task<int> CreateUser(string token)
+		{
 			var userid = await CallTask(string.Format(TaskUrl, "createuser"), token,
 				JsonConvert.SerializeObject(new UserInfo()
 				{
@@ -43,81 +167,8 @@ namespace Matrix.TaskManager.Tester
 					RegisterTS = DateTime.Now,
 				}), "POST");
 
-
-			var task1 = await CallTask(string.Format(TaskUrl, "addtask?userId=" + adminUser.UserId), token,
-							JsonConvert.SerializeObject(
-								 	new TaskInfo()
-									 {
-										 TaskName = "t1",
-										 Address = "ad1",
-										 CityName = "c1",
-										 Status = enTaskStatus.New,
-										 Priority = enPriority.Hige,
-										 DueDate = DateTime.Now
-									 }
-
-								), "POST");
-
-			var task2 = await CallTask(string.Format(TaskUrl, "addtask?userId=" + adminUser.UserId), token,
-							JsonConvert.SerializeObject(
-								 	new TaskInfo()
-									 {
-										 TaskName = "t2",
-										 Address = "ad2",
-										 CityName = "c2",
-										 Status = enTaskStatus.New,
-										 Priority = enPriority.Hige,
-										 DueDate = DateTime.Now
-									 }
-
-								), "POST");
-
-			var newTask1 = JsonConvert.DeserializeObject<TaskInfo>(task1);
-			var newTask2 = JsonConvert.DeserializeObject<TaskInfo>(task2);
-			newTask1.DueDate = DateTime.Now;
-			var result = await CallTask(string.Format(TaskUrl, "updatetask"), token,
-							JsonConvert.SerializeObject(newTask1), "POST");
-
-			result = await CallTask(string.Format(TaskUrl, "updatetaskstatus?taskid= " + newTask1.TaskId + "&status=InProgress"), token,
-				JsonConvert.SerializeObject(newTask1), "POST");
-
-
-			result = await CallTask(string.Format(TaskUrl, "getusertasks?userid= " + adminUser.UserId), token,
-						JsonConvert.SerializeObject(newTask1), "GET");
-			var allTasks = JsonConvert.DeserializeObject<List<TaskInfo>>(result);
-
-			result = await CallTask(string.Format(TaskUrl, "sheretasks?userid=" + adminUser .UserId+ "&userIdToShere= " + userid),
-				token,
-				JsonConvert.SerializeObject(
-					new List<TaskInfo>() { newTask1, newTask2 }), "POST");
-
-			var tasksByMailJson= 
-				await CallTask(string.Format(TaskUrl,
-				"getusertasksbyemail?email=" + "Yaniv101@gmail.com"), 
-				token, "", "GET");
-			var tasksByMail = JsonConvert.DeserializeObject<List<TaskInfo>>(tasksByMailJson);
-
-			var allusersJson  = await CallTask(
-				string.Format(AuthUrl, "getusers") ,
-				token,
-				"", "GET");
-			var allUsers = JsonConvert.DeserializeObject<List<UserInfo>>(allusersJson);
-
-			token = await AuthenticateTokenAsync(
-				string.Format(AuthUrl, "authenticate"), "yaniv", "yaniv");
-
-			result = await CallTask(string.Format(TaskUrl, "emailmytasks"),
-				token,
-				"", "POST");
-
-
-
-			result = await CallTask(string.Format(TaskUrl, "deleteuser?userid= " + userid), token,
-						"", "POST");
-
+			return CastHelper.CastValueToInt( userid);
 		}
-
-
 
 		public async Task<string> CallTask(string url, string token, string data, string cmdType)
 		{

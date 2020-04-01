@@ -32,19 +32,5 @@ namespace Matrix.TaskManager
 				{
 					logging.AddSerilog();
 				});
-				//.UseKestrel((context, serverOptions) =>
-				//{
-				//	serverOptions.Configure(context.Configuration.GetSection("Kestrel"))
-				//		.Endpoint("HTTP", listenOptions =>
-				//		{
-				//			listenOptions.HttpsOptions.SslProtocols = SslProtocols.None;
-				//		})
-				//		.Endpoint("HTTPS", listenOptions =>
-				//		{
-				//			listenOptions.HttpsOptions.SslProtocols = SslProtocols.Tls12;
-				//		});
-				//});
-
-
 	}
 }

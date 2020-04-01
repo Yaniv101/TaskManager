@@ -73,6 +73,29 @@ namespace Matrix.TaskManager.Repository
 			}
 		}
 
+		public async Task<bool> DeleteUserTasks(int userId)
+		{
+			try
+			{
+				var userTasks = await _taskContext.UserTasks.Where(p => p.UserId== userId).ToListAsync();
+				_taskContext.UserTasks.RemoveRange(userTasks);
+				await _taskContext.SaveChangesAsync();
+				var taskUnAttached = await _taskContext.UserTasks.
+						Where(p => userTasks.Select(x=>x.TaskId).Contains( p.TaskId)).ToListAsync();
+				if (taskUnAttached.Count == 0)
+				{
+					_taskContext.Tasks.RemoveRange(await
+						_taskContext.Tasks.Where(p => userTasks.Select(x => x.TaskId).Contains(p.TaskId)).ToListAsync());
+					await _taskContext.SaveChangesAsync();
+				}
+				return true;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError("DeleteUserTasks: " + ex.Message);
+				return false;
+			}
+		}
 		public async Task<bool> DeleteTask(TaskInfo task)
 		{
 			try

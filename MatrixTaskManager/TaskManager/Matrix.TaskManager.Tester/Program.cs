@@ -15,7 +15,12 @@ namespace Matrix.TaskManager.Tester
 
 		static void Main(string[] args)
 		{
-			Console.WriteLine("Hello World!");
+
+			string currentVersion = typeof(Program).Assembly.GetName().Version.ToString();
+			Console.WriteLine(Figgle.FiggleFonts.Standard.Render("MATRIX TASK MANAGER"));
+			Console.WriteLine(Figgle.FiggleFonts.Standard.Render($"Version - {currentVersion}"));
+
+			Console.ReadLine();
 
 			TaskTester tester = new TaskTester();
 			Console.ReadLine();

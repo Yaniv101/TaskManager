@@ -16,6 +16,7 @@ namespace Matrix.TaskManager.Interfaces
 		TaskInfo GetTask(int taskId);
 		Task<TaskInfo> AddTask(int userId, TaskInfo task);
 		Task<bool> DeleteTask(TaskInfo task);
+		Task<bool> DeleteUserTasks(int userId);
 		Task<bool> UpdateTask(TaskInfo task, TaskInfo taskToUpdate);
 		Task<bool> ShereTasks(int userId, List<TaskInfo> tasksToShere, int userIdToShere);
 		Task<IEnumerable<TaskInfo>> GetUserTasks(int userId);

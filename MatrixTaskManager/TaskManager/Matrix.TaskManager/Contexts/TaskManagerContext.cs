@@ -9,10 +9,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Matrix.TaskManager.Contexts
 {
-	//Add-Migration Matrix.TaskManager.Repository.TaskManagerContext
-	//Add-Migration Matrix.TaskManager.Repository.TaskManagerContextSeed
 
+	//Add-Migration Matrix.TaskManager.Repository.TaskManagerContext
 	//update-database
+
+	//Add-Migration Matrix.TaskManager.Repository.TaskManagerContextSeed
 	public class TaskManagerContext : DbContext
 	{
 		public TaskManagerContext(DbContextOptions options)

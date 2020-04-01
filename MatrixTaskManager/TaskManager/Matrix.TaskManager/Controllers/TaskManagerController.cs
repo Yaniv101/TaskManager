@@ -47,7 +47,18 @@ namespace Matrix.TaskManager.Controllers
         [HttpPost("createuser")]
         public async Task<IActionResult> AddUserAsync(UserInfo user, CancellationToken cancellationToken)
         {
-            return Ok(await _dataRepository.AddUser(user));
+            if (user == null)
+            {
+                _logger.LogDebug($"AddUserAsync: failed to create user");
+                return BadRequest("User is null.");
+            }
+
+            var result  = await _dataRepository.AddUser(user);
+            if (result == 0)
+            {
+                _logger.LogDebug($"failed to create user {user.Email}");
+            }
+            return Ok(result);
         }
 
         [HttpPost("updateuser")]
@@ -55,6 +66,7 @@ namespace Matrix.TaskManager.Controllers
         {
             if (user == null)
             {
+                _logger.LogDebug($"UpdateUserAsync: failed to update user {id}");
                 return BadRequest("User is null.");
             }
 
@@ -76,14 +88,26 @@ namespace Matrix.TaskManager.Controllers
         [HttpGet("getuser")]
         public async Task<IActionResult> GetUserAsync(int userid,  CancellationToken cancellationToken)
         {
-
-            return Ok(await _dataRepository.GetUser(userid));
+            var user = await _dataRepository.GetUser(userid);
+            if (user == null)
+            {
+                _logger.LogDebug($"GetUserAsync: failed to retrive user {userid}");
+                return NotFound();
+            }
+            return Ok(user);
         }
 
         [HttpPost("addtask")]
         public async Task<IActionResult> AddTaskAsync(int userId ,TaskInfo task ,CancellationToken cancellationToken)
         {
-            return Ok(await _dataRepository.AddTask(userId,task));
+            var newTask= await _dataRepository.AddTask(userId, task);
+
+            if (newTask == null)
+            {
+                _logger.LogDebug($"AddTaskAsync: failed to create task for user {userId}");
+                return NotFound();
+            }
+            return Ok(task);
         }
 
         [HttpPost("updatetask")]
@@ -110,12 +134,18 @@ namespace Matrix.TaskManager.Controllers
             return Ok(await _dataRepository.UpdateTaskStatus(taskId,status));
         }
 
-
         [HttpPost("deletetask")]
         public async Task<IActionResult> DeleteTaskAsync(TaskInfo task, CancellationToken cancellationToken)
         {
             return Ok(await _dataRepository.DeleteTask(task));
         }
+
+        [HttpPost("deleteusertasks")]
+        public async Task<IActionResult> DeleteUserTasksAsync(int userId, CancellationToken cancellationToken)
+        {
+            return Ok(await _dataRepository.DeleteUserTasks(userId));
+        }
+
 
         [HttpPost("sheretasks")]
         public async Task<IActionResult> ShereTasksAsync(int userId, int userIdToShere,
@@ -134,22 +164,38 @@ namespace Matrix.TaskManager.Controllers
         public async Task<IActionResult> EmailMyTasksAsync(CancellationToken cancellationToken)
         {
             var email  = ExtractJWTEmail();
-            var tasks = await _dataRepository.GetUserTasksByEmail(email);
+            if (!string.IsNullOrEmpty(email))
+            {
+                var tasks = await _dataRepository.GetUserTasksByEmail(email);
 
-            return Ok(await _emailRepository.SendEmail(
-                _appSettings.Email.UserName, email, "My Tasks",
-                FormatTasks(tasks))  );
+                return Ok(await _emailRepository.SendEmail(
+                    _appSettings.Email.UserName, email, "My Tasks",
+                    FormatTasks(tasks)));
+            }
+            else
+            {
+                return NotFound("failed to extract user data");
+            }
         }
 
         private string ExtractJWTEmail()
         {
-            var accessToken = _httpContextAccessor.HttpContext.
-                        Request.Headers["Authorization"];
-            var handler = new JwtSecurityTokenHandler();
+            try
+            {
+                var accessToken = _httpContextAccessor.HttpContext.
+             Request.Headers["Authorization"];
+                var handler = new JwtSecurityTokenHandler();
 
-            var res = handler.ReadJwtToken(accessToken.ToString().Replace("Bearer ", ""));
-            var email = res.Claims.Where(p => p.Type == "email").First();
-            return email.Value;
+                var res = handler.ReadJwtToken(accessToken.ToString().Replace("Bearer ", ""));
+                var email = res.Claims.Where(p => p.Type == "email").First();
+                return email.Value;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("ExtractJWTEmail: failed to extract email address from jwt - " + ex.Message);
+                return string.Empty;
+            }
         }
 
         private string FormatTasks(IEnumerable<TaskInfo>  tasks)
@@ -167,13 +213,27 @@ namespace Matrix.TaskManager.Controllers
         [HttpGet("getusertasks")]
         public async Task<IActionResult > GetUserTasksAsync(int userId ,CancellationToken cancellationToken)
         {
-            return Ok(await _dataRepository.GetUserTasks(userId));
+            var tasks = await _dataRepository.GetUserTasks(userId);
+            if (tasks == null)
+            {
+                _logger.LogError($"failed to retrive user {userId} tasks");
+                return NotFound();
+            }
+
+            return Ok(tasks);
         }
 
         [HttpGet("getusertasksbyemail")]
         public async Task<IActionResult> GetUserTasksByEmailAsync(string email, CancellationToken cancellationToken)
         {
-            return Ok(await _dataRepository.GetUserTasksByEmail(email));
+            var tasks  = await _dataRepository.GetUserTasksByEmail(email);
+
+            if (tasks == null)
+            {
+                _logger.LogError($"failed to retrive user tasks by email {email}");
+                return NotFound();
+            }
+            return Ok(tasks);
         }
 
     }

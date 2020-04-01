@@ -5,19 +5,11 @@ VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matrix.TaskManager", "TaskManager\Matrix.TaskManager\Matrix.TaskManager.csproj", "{6E5B685D-0182-4AE8-8B65-77DBBF4AC275}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logging", "Logging", "{048E71C3-5703-4A06-BBB7-0FF3EAE897A0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{5272C9EC-6398-48FA-B158-8B02C66B0067}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TaskManager", "TaskManager", "{39655C72-03F7-4932-A6AF-22239EDF7B83}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matrix.TaskManager.Common", "Common\Matrix.TaskManager.Common\Matrix.TaskManager.Common.csproj", "{05E67A1B-A3EB-406D-B186-E3695A597D0D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matrix.TaskManager.Logging.Log4Net", "Logging\Matrix.TaskManager.Logging.Log4Net\Matrix.TaskManager.Logging.Log4Net.csproj", "{F1DD3336-AC38-4ED0-93EC-AB986DDD3D66}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matrix.TaskManager.Logging.NLog", "Logging\Matrix.TaskManager.Logging.NLog\Matrix.TaskManager.Logging.NLog.csproj", "{F686B48A-8ACA-4465-B264-472544EC14B1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matrix.TaskManager.Logging.Serilog", "Logging\Matrix.TaskManager.Logging.Serilog\Matrix.TaskManager.Logging.Serilog.csproj", "{9C11D24B-D81D-4D91-BEC1-356F3A19561E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matrix.TaskManager.Tester", "TaskManager\Matrix.TaskManager.Tester\Matrix.TaskManager.Tester.csproj", "{6CCFEC0F-D881-426F-A45A-60881178594C}"
 EndProject
@@ -35,18 +27,6 @@ Global
 		{05E67A1B-A3EB-406D-B186-E3695A597D0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05E67A1B-A3EB-406D-B186-E3695A597D0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05E67A1B-A3EB-406D-B186-E3695A597D0D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1DD3336-AC38-4ED0-93EC-AB986DDD3D66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1DD3336-AC38-4ED0-93EC-AB986DDD3D66}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1DD3336-AC38-4ED0-93EC-AB986DDD3D66}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1DD3336-AC38-4ED0-93EC-AB986DDD3D66}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F686B48A-8ACA-4465-B264-472544EC14B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F686B48A-8ACA-4465-B264-472544EC14B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F686B48A-8ACA-4465-B264-472544EC14B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F686B48A-8ACA-4465-B264-472544EC14B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9C11D24B-D81D-4D91-BEC1-356F3A19561E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9C11D24B-D81D-4D91-BEC1-356F3A19561E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9C11D24B-D81D-4D91-BEC1-356F3A19561E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9C11D24B-D81D-4D91-BEC1-356F3A19561E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6CCFEC0F-D881-426F-A45A-60881178594C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6CCFEC0F-D881-426F-A45A-60881178594C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CCFEC0F-D881-426F-A45A-60881178594C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -58,9 +38,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6E5B685D-0182-4AE8-8B65-77DBBF4AC275} = {39655C72-03F7-4932-A6AF-22239EDF7B83}
 		{05E67A1B-A3EB-406D-B186-E3695A597D0D} = {5272C9EC-6398-48FA-B158-8B02C66B0067}
-		{F1DD3336-AC38-4ED0-93EC-AB986DDD3D66} = {048E71C3-5703-4A06-BBB7-0FF3EAE897A0}
-		{F686B48A-8ACA-4465-B264-472544EC14B1} = {048E71C3-5703-4A06-BBB7-0FF3EAE897A0}
-		{9C11D24B-D81D-4D91-BEC1-356F3A19561E} = {048E71C3-5703-4A06-BBB7-0FF3EAE897A0}
 		{6CCFEC0F-D881-426F-A45A-60881178594C} = {39655C72-03F7-4932-A6AF-22239EDF7B83}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
