@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <StartupObject>Matrix.TaskManager.Tester.Program</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.3" />
+    <PackageReference Include="Microsoft.NETCore.App" Version="2.2.8" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Matrix.TaskManager.Common\Matrix.TaskManager.Common.csproj" />
+    <ProjectReference Include="..\..\Logging\Matrix.TaskManager.Logging.Log4Net\Matrix.TaskManager.Logging.Log4Net.csproj" />
+    <ProjectReference Include="..\..\Logging\Matrix.TaskManager.Logging.NLog\Matrix.TaskManager.Logging.NLog.csproj" />
+    <ProjectReference Include="..\..\Logging\Matrix.TaskManager.Logging.Serilog\Matrix.TaskManager.Logging.Serilog.csproj" />
+  </ItemGroup>
+
+</Project>
