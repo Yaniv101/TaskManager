@@ -1,15 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System.Linq;
-using System.Threading;
-using Matrix.TaskManager.Common.Model;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using Matrix.TaskManager.Common.Models;
 using Matrix.TaskManager.Services;
-using Matrix.TaskManager.Common.Models;
-using Microsoft.Extensions.Options;
-using Matrix.TaskManager.Common.Logging;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace Matrix.TaskManager.Controllers
 {
@@ -20,7 +14,7 @@ namespace Matrix.TaskManager.Controllers
     public class AuthenticationController : ControllerBase
     {
         private IAuthenticationService _userService;
-        private ILogger< AuthenticationController> _logger;
+        private ILogger<AuthenticationController> _logger;
         public AuthenticationController(IAuthenticationService userService,
             ILogger<AuthenticationController> logger)
         {

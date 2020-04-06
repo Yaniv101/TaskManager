@@ -149,15 +149,25 @@ namespace Matrix.TaskManager.Controllers
 
         [HttpPost("sheretasks")]
         public async Task<IActionResult> ShereTasksAsync(int userId, int userIdToShere,
-            List<TaskInfo> tasksToShere,   CancellationToken cancellationToken)
+            List<TaskInfo> tasksToShere, CancellationToken cancellationToken)
         {
-            var result = await _dataRepository.ShereTasks(userId, tasksToShere, userIdToShere);
-            //send email to user with new tasks
-            var user =await _dataRepository.GetUser(userId);
-            var userTo =await _dataRepository.GetUser(userIdToShere);
-            var tasks = await _dataRepository.GetUserTasks(userId);
-            await _emailRepository.SendEmail(user.Email, userTo.Email, "New Tasks for you", FormatTasks(tasks));
-            return Ok(result);
+            try
+            {
+                _logger.LogError($"ShereTasksAsync: shere tasks for user id {userId}  - into {userIdToShere}");
+                var result = await _dataRepository.ShereTasks(userId, tasksToShere, userIdToShere);
+                //send email to user with new tasks
+                var user = await _dataRepository.GetUser(userId);
+                var userTo = await _dataRepository.GetUser(userIdToShere);
+                var tasks = await _dataRepository.GetUserTasks(userId);
+                await _emailRepository.SendEmail(user.Email, userTo.Email, "New Tasks for you", FormatTasks(tasks));
+                return Ok(result);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ShereTasksAsync: failed to shere tasks for user id {userId}  - {ex.Message}");
+                return NotFound($"failed to shere tasks for user id {userId}  - {ex.Message}");
+            }
         }
 
         [HttpPost("emailmytasks")]
@@ -183,7 +193,7 @@ namespace Matrix.TaskManager.Controllers
             try
             {
                 var accessToken = _httpContextAccessor.HttpContext.
-             Request.Headers["Authorization"];
+                                     Request.Headers["Authorization"];
                 var handler = new JwtSecurityTokenHandler();
 
                 var res = handler.ReadJwtToken(accessToken.ToString().Replace("Bearer ", ""));
@@ -217,7 +227,7 @@ namespace Matrix.TaskManager.Controllers
             if (tasks == null)
             {
                 _logger.LogError($"failed to retrive user {userId} tasks");
-                return NotFound();
+                return NotFound($"failed to retrive user {userId} tasks");
             }
 
             return Ok(tasks);

@@ -1,12 +1,10 @@
-﻿using Matrix.TaskManager.Common.Extensions;
-using Matrix.TaskManager.Common.Helpers;
+﻿using Matrix.TaskManager.Common.Helpers;
 using Matrix.TaskManager.Common.Model;
 using Matrix.TaskManager.Common.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Matrix.TaskManager.Tester
@@ -17,14 +15,17 @@ namespace Matrix.TaskManager.Tester
 		private string TaskUrl = "http://localhost:4000/api/taskmanager/{0}";
 		public TaskTester()
 		{
-			RunTest();
-		}
 
-		private async void RunTest()
+		}
+		public async void RunTest()
+		{
+			await RunTestAsync();
+		}
+		public async Task RunTestAsync()
 		{
 			var token = await Login("admin", "12345");
 
-			var adminUser =await GetUser(1,token);//get admin user
+			var adminUser = await GetUser(1, token);//get admin user
 
 			var userid = await CreateUser(token);
 
@@ -42,10 +43,10 @@ namespace Matrix.TaskManager.Tester
 
 			await ShereTasks(adminUser.UserId, userid, new List<TaskInfo>() { newTask1, newTask2 }, token);
 
-			var tasksByMail =await GetTasksByEmail("Yaniv101@gmail.com", token );
+			var tasksByMail = await GetTasksByEmail("Yaniv101@gmail.com", token);
 
 
-			var yanivToken = await Login( "yaniv", "yaniv");
+			var yanivToken = await Login("yaniv", "yaniv");
 			await EmailMyTasks(yanivToken);
 
 			await DeleteUser(userid, yanivToken);
@@ -72,8 +73,8 @@ namespace Matrix.TaskManager.Tester
 
 		private async Task<string> Login(string user, string pass)
 		{
-			var token =  await AuthenticateTokenAsync( string.Format(AuthUrl, 
-												"authenticate"), user,pass);
+			var token = await AuthenticateTokenAsync(string.Format(AuthUrl,
+												"authenticate"), user, pass);
 
 			return token;
 		}
@@ -96,8 +97,8 @@ namespace Matrix.TaskManager.Tester
 
 		private async Task<string> ShereTasks(int userFromId, int userToid, List<TaskInfo> tasks, string token)
 		{
-			return await CallTask(string.Format(TaskUrl, 
-							"sheretasks?userid=" + userFromId+ "&userIdToShere= " + userToid),token,
+			return await CallTask(string.Format(TaskUrl,
+							"sheretasks?userid=" + userFromId + "&userIdToShere= " + userToid), token,
 							JsonConvert.SerializeObject(tasks), "POST");
 		}
 
@@ -110,7 +111,7 @@ namespace Matrix.TaskManager.Tester
 
 		private async Task<string> UpdateTaskStatus(TaskInfo newTask, enTaskStatus status, string token)
 		{
-			return await CallTask(string.Format(TaskUrl, "updatetaskstatus?taskid= " + 
+			return await CallTask(string.Format(TaskUrl, "updatetaskstatus?taskid= " +
 										newTask.TaskId + "&status=" + status.ToString()), token,
 				JsonConvert.SerializeObject(newTask), "POST");
 		}
@@ -126,11 +127,11 @@ namespace Matrix.TaskManager.Tester
 
 		private async Task<TaskInfo> AddTask(string tinx, int userId, string token)
 		{
-			var taskJson =  await CallTask(string.Format(TaskUrl, "addtask?userId=" + userId), token,
+			var taskJson = await CallTask(string.Format(TaskUrl, "addtask?userId=" + userId), token,
 							JsonConvert.SerializeObject(
 								 	new TaskInfo()
 									 {
-										 TaskName = "t"+ tinx,
+										 TaskName = "t" + tinx,
 										 Address = "ad" + tinx,
 										 CityName = "c" + tinx,
 										 Status = enTaskStatus.New,
@@ -139,11 +140,11 @@ namespace Matrix.TaskManager.Tester
 									 }
 
 								), "POST");
-			return  JsonConvert.DeserializeObject<TaskInfo>(taskJson);
+			return JsonConvert.DeserializeObject<TaskInfo>(taskJson);
 
 		}
 
-		private async Task<UserInfo > GetUser(int userId,string token)
+		private async Task<UserInfo> GetUser(int userId, string token)
 		{
 			var userJson = await CallTask(string.Format(TaskUrl, "getuser?userid=" + userId), token,
 				"", "GET");
@@ -167,7 +168,7 @@ namespace Matrix.TaskManager.Tester
 					RegisterTS = DateTime.Now,
 				}), "POST");
 
-			return CastHelper.CastValueToInt( userid);
+			return CastHelper.CastValueToInt(userid);
 		}
 
 		public async Task<string> CallTask(string url, string token, string data, string cmdType)
@@ -176,7 +177,7 @@ namespace Matrix.TaskManager.Tester
 			Uri serviceAccountTokenUri = new Uri(url);
 
 			string requestJson = data;
-			using (var webClient = NetExtensions.WebClient())
+			using (var webClient = new WebClient())
 			{
 				try
 				{
@@ -209,13 +210,13 @@ namespace Matrix.TaskManager.Tester
 		}
 
 		public async Task<string> AuthenticateTokenAsync(
-			string url,string userName, string password )
+			string url, string userName, string password)
 		{
 			Uri serviceAccountTokenUri = new Uri(url);
 			AuthenticateModel request = new AuthenticateModel()
 			{ Username = userName, Password = password };
 			string requestJson = JsonConvert.SerializeObject(request);
-			using (var webClient = NetExtensions.WebClient())
+			using (var webClient = new WebClient())
 			{
 				//_logger.LogDebug($"Request:\n{requestJson}");
 
@@ -236,12 +237,8 @@ namespace Matrix.TaskManager.Tester
 					MemoryUtilities.CleanupWebClient(webClient);
 				}
 			}
-
-
 			return null;
 		}
-
-
 
 		private static void ConfigureRequestHeaders(
 			WebClient webClient, string accessToken)

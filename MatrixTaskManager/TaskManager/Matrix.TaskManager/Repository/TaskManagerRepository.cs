@@ -23,7 +23,7 @@ namespace Matrix.TaskManager.Repository
 
 
 		public TaskManagerRepository(
-			TaskManagerContext context, 
+			TaskManagerContext context,
 			ILogger<TaskManagerRepository> logger,
 			IHttpContextAccessor httpContextAccessor)
 		{
@@ -69,6 +69,7 @@ namespace Matrix.TaskManager.Repository
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError("AddTask: " + ex.Message);
 				return null;
 			}
 		}
@@ -77,11 +78,11 @@ namespace Matrix.TaskManager.Repository
 		{
 			try
 			{
-				var userTasks = await _taskContext.UserTasks.Where(p => p.UserId== userId).ToListAsync();
+				var userTasks = await _taskContext.UserTasks.Where(p => p.UserId == userId).ToListAsync();
 				_taskContext.UserTasks.RemoveRange(userTasks);
 				await _taskContext.SaveChangesAsync();
 				var taskUnAttached = await _taskContext.UserTasks.
-						Where(p => userTasks.Select(x=>x.TaskId).Contains( p.TaskId)).ToListAsync();
+						Where(p => userTasks.Select(x => x.TaskId).Contains(p.TaskId)).ToListAsync();
 				if (taskUnAttached.Count == 0)
 				{
 					_taskContext.Tasks.RemoveRange(await
@@ -111,6 +112,7 @@ namespace Matrix.TaskManager.Repository
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError("DeleteTask: " + ex.Message);
 				return false;
 			}
 		}
@@ -122,19 +124,37 @@ namespace Matrix.TaskManager.Repository
 
 		public async Task<IEnumerable<TaskInfo>> GetUserTasks(int userId)
 		{
-			return
-				await (from x in _taskContext.UserTasks
-					   join y in _taskContext.Tasks on x.TaskId equals y.TaskId
-					   where x.UserId == userId
-					   select y).ToListAsync();
+			try
+			{
+				return
+					await (from x in _taskContext.UserTasks
+						   join y in _taskContext.Tasks on x.TaskId equals y.TaskId
+						   where x.UserId == userId
+						   select y).ToListAsync();
+
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError("GetUserTasks: " + ex.Message);
+				return null;
+			}
 		}
 		public async Task<IEnumerable<TaskInfo>> GetUserTasksByEmail(string email)
 		{
-			return await (from x in _taskContext.UserTasks
-						  join y in _taskContext.Tasks on x.TaskId equals y.TaskId
-						  join u in _taskContext.Users on x.UserId equals u.UserId
-						  where u.Email == email.Trim()
-						  select y).ToListAsync();
+			try
+			{
+				return await (from x in _taskContext.UserTasks
+							  join y in _taskContext.Tasks on x.TaskId equals y.TaskId
+							  join u in _taskContext.Users on x.UserId equals u.UserId
+							  where u.Email == email.Trim()
+							  select y).ToListAsync();
+
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError("GetUserTasksByEmail: " + ex.Message);
+				return null;
+			}
 		}
 
 		public async Task<bool> UpdateTask(TaskInfo task, TaskInfo taskToUpdate)
@@ -151,6 +171,7 @@ namespace Matrix.TaskManager.Repository
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError("UpdateTask: " + ex.Message);
 				return false;
 			}
 		}
@@ -169,7 +190,7 @@ namespace Matrix.TaskManager.Repository
 			}
 			catch (Exception ex)
 			{
-
+				_logger.LogError("UpdateTaskStatus: " + ex.Message);
 				return false;
 			}
 		}
@@ -201,6 +222,7 @@ namespace Matrix.TaskManager.Repository
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError("ShereTasks: " + ex.Message);
 				return false;
 			}
 		}
@@ -208,12 +230,20 @@ namespace Matrix.TaskManager.Repository
 		{
 			try
 			{
-				await _taskContext.Users.AddAsync(entity);
-				await _taskContext.SaveChangesAsync();
-				return entity.UserId;
+				if (_taskContext.Users.Where(p => p.Email.CompareTo(entity.Email) == 0).Count() == 0)
+				{
+					await _taskContext.Users.AddAsync(entity);
+					await _taskContext.SaveChangesAsync();
+					return entity.UserId;
+				}
+				else
+				{
+					throw new Exception("AddUser: user email already exist");
+				}
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError("AddUser: " + ex.Message);
 				return 0;
 			}
 		}
@@ -235,6 +265,7 @@ namespace Matrix.TaskManager.Repository
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"UpdateUser: user {user.UserName} - " + ex.Message);
 				return false;
 			}
 		}
@@ -243,6 +274,7 @@ namespace Matrix.TaskManager.Repository
 		{
 			try
 			{
+				_logger.LogError($"DeleteUser: now deleting user {userId}");
 				_taskContext.UserTasks.RemoveRange(_taskContext.UserTasks.Where(p => p.UserId == userId));
 				_taskContext.Users.Remove(_taskContext.Users.Where(p => p.UserId == userId).FirstOrDefault());
 				await _taskContext.SaveChangesAsync();
@@ -251,6 +283,7 @@ namespace Matrix.TaskManager.Repository
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"DeleteUser: user {userId} - " + ex.Message);
 				return false;
 			}
 		}
