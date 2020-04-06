@@ -15,6 +15,7 @@ using System.Linq;
 using Microsoft.Extensions.Options;
 using Matrix.TaskManager.Common.Configuration;
 using Matrix.TaskManager.Interfaces;
+using Matrix.TaskManager.Common.Extenstions;
 
 namespace Matrix.TaskManager.Controllers
 {
@@ -45,8 +46,13 @@ namespace Matrix.TaskManager.Controllers
         }
 
         [HttpPost("createuser")]
-        public async Task<IActionResult> AddUserAsync(UserInfo user, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddUserAsync([FromBody]UserInfo user, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.StringifyModelErrors();
+                return BadRequest(errors);
+            }
             if (user == null)
             {
                 _logger.LogDebug($"AddUserAsync: failed to create user");
@@ -64,6 +70,12 @@ namespace Matrix.TaskManager.Controllers
         [HttpPost("updateuser")]
         public async Task<IActionResult> UpdateUserAsync(int id, [FromBody]UserInfo user, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.StringifyModelErrors();
+                return BadRequest(errors);
+            }
+
             if (user == null)
             {
                 _logger.LogDebug($"UpdateUserAsync: failed to update user {id}");
@@ -82,12 +94,24 @@ namespace Matrix.TaskManager.Controllers
         [HttpPost("deleteuser")]
         public async Task<IActionResult> DeleteUserAsync(int userId, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.StringifyModelErrors();
+                return BadRequest(errors);
+            }
+
             return Ok(await _dataRepository.DeleteUser(userId));
         }
 
         [HttpGet("getuser")]
         public async Task<IActionResult> GetUserAsync(int userid,  CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.StringifyModelErrors();
+                return BadRequest(errors);
+            }
+
             var user = await _dataRepository.GetUser(userid);
             if (user == null)
             {
@@ -100,7 +124,12 @@ namespace Matrix.TaskManager.Controllers
         [HttpPost("addtask")]
         public async Task<IActionResult> AddTaskAsync(int userId ,TaskInfo task ,CancellationToken cancellationToken)
         {
-            var newTask= await _dataRepository.AddTask(userId, task);
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.StringifyModelErrors();
+                return BadRequest(errors);
+            }
+            var newTask = await _dataRepository.AddTask(userId, task);
 
             if (newTask == null)
             {
@@ -113,6 +142,11 @@ namespace Matrix.TaskManager.Controllers
         [HttpPost("updatetask")]
         public async Task<IActionResult> UpdateTaskAsync(TaskInfo task, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.StringifyModelErrors();
+                return BadRequest(errors);
+            }
             if (task== null)
             {
                 return BadRequest("task is null.");
@@ -130,6 +164,11 @@ namespace Matrix.TaskManager.Controllers
         [HttpPost("updatetaskstatus")]
         public async Task<IActionResult> UpdateTaskStatusAsync(int taskId,enTaskStatus status, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.StringifyModelErrors();
+                return BadRequest(errors);
+            }
 
             return Ok(await _dataRepository.UpdateTaskStatus(taskId,status));
         }
@@ -137,12 +176,22 @@ namespace Matrix.TaskManager.Controllers
         [HttpPost("deletetask")]
         public async Task<IActionResult> DeleteTaskAsync(TaskInfo task, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.StringifyModelErrors();
+                return BadRequest(errors);
+            }
             return Ok(await _dataRepository.DeleteTask(task));
         }
 
         [HttpPost("deleteusertasks")]
         public async Task<IActionResult> DeleteUserTasksAsync(int userId, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.StringifyModelErrors();
+                return BadRequest(errors);
+            }
             return Ok(await _dataRepository.DeleteUserTasks(userId));
         }
 
@@ -153,6 +202,12 @@ namespace Matrix.TaskManager.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.StringifyModelErrors();
+                    return BadRequest(errors);
+                }
+
                 _logger.LogError($"ShereTasksAsync: shere tasks for user id {userId}  - into {userIdToShere}");
                 var result = await _dataRepository.ShereTasks(userId, tasksToShere, userIdToShere);
                 //send email to user with new tasks
@@ -223,6 +278,11 @@ namespace Matrix.TaskManager.Controllers
         [HttpGet("getusertasks")]
         public async Task<IActionResult > GetUserTasksAsync(int userId ,CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.StringifyModelErrors();
+                return BadRequest(errors);
+            }
             var tasks = await _dataRepository.GetUserTasks(userId);
             if (tasks == null)
             {
@@ -236,6 +296,11 @@ namespace Matrix.TaskManager.Controllers
         [HttpGet("getusertasksbyemail")]
         public async Task<IActionResult> GetUserTasksByEmailAsync(string email, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.StringifyModelErrors();
+                return BadRequest(errors);
+            }
             var tasks  = await _dataRepository.GetUserTasksByEmail(email);
 
             if (tasks == null)

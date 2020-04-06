@@ -5,6 +5,9 @@ using System;
 using System.Linq;
 using System.Security.Authentication;
 using Microsoft.AspNetCore.Server.Kestrel;
+using Matrix.TaskManager.Contexts;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Matrix.TaskManager
 {
@@ -18,15 +21,24 @@ namespace Matrix.TaskManager
 			Console.WriteLine(Figgle.FiggleFonts.Standard.Render($"Version - {currentVersion}"));
 
 
-			CreateHostBuilder(args.Where(arg => arg != "--console").ToArray()).Build().Run();
+			var host = CreateHostBuilder(args.Where(arg => arg != "--console").ToArray()).Build();
+
+			using (var scope = host.Services.CreateScope()) 
+			{
+				using (var context = scope.ServiceProvider.GetService<TaskManagerContext>())
+				{
+					context.Database.EnsureCreated();
+				}
+			}
+			host.Run();
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
 			Host.CreateDefaultBuilder(args)
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
-					webBuilder.UseStartup<Startup>()
-					 .UseUrls("http://localhost:4000");
+					webBuilder.UseStartup<Startup>();
+//					 .UseUrls("http://localhost:4000");
 				})
 				.ConfigureLogging((hostingContext, logging) =>
 				{
