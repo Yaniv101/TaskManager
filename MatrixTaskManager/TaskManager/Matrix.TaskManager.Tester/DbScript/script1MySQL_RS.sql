@@ -1,0 +1,1 @@
+﻿Select * from table_1
