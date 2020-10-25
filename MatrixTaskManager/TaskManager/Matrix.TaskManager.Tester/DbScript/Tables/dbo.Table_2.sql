@@ -30,3 +30,7 @@ INSERT INTO [dbo].Table_2_his
 		   ,GETDATE()
 		   from inserted
 GO
+CREATE CLUSTERED INDEX [ClusteredIndex-20201025-121404] ON [dbo].[Table_2] ([f11], [f22]) ON [PRIMARY]
+GO
+CREATE STATISTICS [stat1] ON [dbo].[Table_2] ([f11])
+GO
