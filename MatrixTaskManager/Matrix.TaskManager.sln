@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matrix.TaskManager.Common",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matrix.TaskManager.Tester", "TaskManager\Matrix.TaskManager.Tester\Matrix.TaskManager.Tester.csproj", "{6CCFEC0F-D881-426F-A45A-60881178594C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DBTester", "DBTester", "{52D35F33-D140-4EE6-A886-DB26889CC2BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

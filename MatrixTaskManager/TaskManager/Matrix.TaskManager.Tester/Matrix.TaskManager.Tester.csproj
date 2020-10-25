@@ -26,4 +26,8 @@
     <ProjectReference Include="..\..\Common\Matrix.TaskManager.Common\Matrix.TaskManager.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DbScript\" />
+  </ItemGroup>
+
 </Project>
