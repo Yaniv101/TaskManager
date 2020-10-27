@@ -1,0 +1,1 @@
+CREATE SEQUENCE yaniv.table1_seq;
