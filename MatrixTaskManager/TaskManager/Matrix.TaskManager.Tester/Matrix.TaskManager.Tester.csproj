@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <Folder Include="DbScript\" />
-    <Folder Include="OraclScript\" />
+    <Folder Include="OraclScript1\" />
   </ItemGroup>
 
 </Project>
