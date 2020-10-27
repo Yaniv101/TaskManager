@@ -1,1 +1,1 @@
-CREATE INDEX yaniv1.aaaaa_index1 ON yaniv1.aaaaa(column1);
+CREATE UNIQUE INDEX yaniv1.aaaaa_index1 ON yaniv1.aaaaa(column1);
