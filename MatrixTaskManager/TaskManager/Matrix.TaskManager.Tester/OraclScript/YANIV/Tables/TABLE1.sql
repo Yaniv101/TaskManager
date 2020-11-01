@@ -5,5 +5,7 @@ CREATE TABLE yaniv.table1 (
   column4 VARCHAR2(20 BYTE),
   column5 VARCHAR2(20 BYTE),
   column6 VARCHAR2(20 BYTE),
-  column7 VARCHAR2(20 BYTE)
+  column7 VARCHAR2(20 BYTE),
+  column8 VARCHAR2(20 BYTE),
+  column9 VARCHAR2(20 BYTE)
 );
