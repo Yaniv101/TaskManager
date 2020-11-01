@@ -81,20 +81,20 @@ Begin DesignProperties =
       Begin Tables = 
          Begin Table = "Table_1"
             Begin Extent = 
-               Top = 9
-               Left = 57
-               Bottom = 179
-               Right = 279
+               Top = 14
+               Left = 52
+               Bottom = 184
+               Right = 274
             End
             DisplayFlags = 280
             TopColumn = 0
          End
          Begin Table = "Table_2"
             Begin Extent = 
-               Top = 9
-               Left = 336
-               Bottom = 206
-               Right = 558
+               Top = 61
+               Left = 973
+               Bottom = 258
+               Right = 1195
             End
             DisplayFlags = 280
             TopColumn = 0
