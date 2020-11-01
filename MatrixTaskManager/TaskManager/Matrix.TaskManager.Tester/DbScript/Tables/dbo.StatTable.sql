@@ -4,7 +4,8 @@ CREATE TABLE [dbo].[StatTable]
 [f2] [nchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [f3] [nchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [f4] [nchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[ggg] [nchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[ggg] [nchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[vvv] [nchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[StatTable] ADD CONSTRAINT [PK_StatTable] PRIMARY KEY CLUSTERED  ([f1]) ON [PRIMARY]
