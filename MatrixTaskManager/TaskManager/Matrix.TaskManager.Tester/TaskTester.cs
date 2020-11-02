@@ -41,7 +41,9 @@ namespace Matrix.TaskManager.Tester
 
 			var allTasks = GetUserTasks(adminUser.UserId, token);
 
-			await ShereTasks(adminUser.UserId, userid, new List<TaskInfo>() { newTask1, newTask2 }, token);
+			await ShereTasks(adminUser.UserId, userid,
+				new List<TaskInfo>() { newTask1, newTask2 },
+				token);
 
 			var tasksByMail = await GetTasksByEmail("Yaniv101@gmail.com", token);
 

@@ -33,7 +33,6 @@ namespace Matrix.TaskManager.Common.Model
         public string Token { get; set; }
 
 
-  //      public virtual ICollection<UserTasks> UserTasks { get; set; }
         public UserInfo()
         {
 //            this.UserTasks = new HashSet<UserTasks>();
