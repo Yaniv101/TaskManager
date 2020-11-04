@@ -4,3 +4,9 @@ CREATE TABLE yaniv1.aaaaa (
   column3 VARCHAR2(20 BYTE),
   CONSTRAINT aaaaa_pk PRIMARY KEY (column1) USING INDEX yaniv1.aaaaa_index1
 );
+
+
+03/11/2020 17:21:04
+03/11/2020 17:21:19
+03/11/2020 17:21:19
+03/11/2020 17:21:19

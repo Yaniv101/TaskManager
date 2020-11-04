@@ -37,6 +37,7 @@ namespace Matrix.TaskManager
 			Version = typeof(Startup).Assembly.GetName().Version.ToString();
 		}
 
+
 		public IConfiguration Configuration { get; }
 		public IWebHostEnvironment HostingEnvironment;
 		// This method gets called by the runtime. Use this method to add services to the container.
