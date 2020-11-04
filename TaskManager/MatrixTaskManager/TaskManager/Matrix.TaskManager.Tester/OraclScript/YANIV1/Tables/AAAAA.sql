@@ -4,5 +4,8 @@ CREATE TABLE yaniv1.aaaaa (
   column3 VARCHAR2(20 BYTE),
   column4 VARCHAR2(20 BYTE),
   column5 VARCHAR2(20 BYTE),
+  column6 VARCHAR2(20 BYTE),
+  column7 VARCHAR2(20 BYTE),
+  column8 VARCHAR2(20 BYTE),
   CONSTRAINT aaaaa_pk PRIMARY KEY (column1) USING INDEX yaniv1.aaaaa_index1
 );
